@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金融知识库 · 文件导入</title>
+    <style>
+        :root{
+            --bg:#eef2f9;
+            --panel:#ffffff;
+            --panel-2:#f7f9fd;
+            --text:#0f1e35;
+            --muted:#6b7a90;
+            --brand:#3056d3;
+            --brand2:#6c4bd8;
+            --brand-soft:rgba(48,86,211,.10);
+            --line:#e4eaf3;
+            --radius:14px;
+            --shadow-sm:0 1px 2px rgba(15,30,53,.05), 0 6px 18px rgba(15,30,53,.06);
+            --shadow-lg:0 28px 70px rgba(15,30,53,.16);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 30px 20px 50px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            color: var(--text);
+            font-family: "Segoe UI", "Microsoft YaHei", system-ui, -apple-system, "PingFang SC", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background:
+                radial-gradient(1000px 480px at 12% -12%, rgba(48,86,211,.16), transparent 60%),
+                radial-gradient(820px 440px at 100% 0%, rgba(108,75,216,.13), transparent 55%),
+                linear-gradient(180deg, #f4f7fc 0%, var(--bg) 60%, #e9eefa 100%);
+        }
+        .container {
+            width: 100%;
+            max-width: 860px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            padding: 30px 34px 26px;
+        }
+
+        /* 页头 */
+        .page-head {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        .page-head .mark {
+            width: 44px;
+            height: 44px;
+            border-radius: 13px;
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--brand), var(--brand2));
+            box-shadow: 0 10px 22px rgba(48,86,211,.28);
+        }
+        .page-head .mark svg { width: 23px; height: 23px; display: block; }
+        h1 {
+            margin: 0;
+            font-size: 19px;
+            font-weight: 600;
+            letter-spacing: .2px;
+            color: var(--text);
+            text-align: left;
+        }
+        .page-head .sub {
+            margin: 5px 0 0;
+            font-size: 13px;
+            color: var(--muted);
+        }
+        .back-link {
+            margin-left: auto;
+            flex: 0 0 auto;
+            font-size: 12px;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 7px 12px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: #fff;
+            white-space: nowrap;
+            transition: color .2s ease, border-color .2s ease, box-shadow .2s ease;
+        }
+        .back-link:hover {
+            color: var(--brand);
+            border-color: rgba(48,86,211,.4);
+            box-shadow: 0 6px 16px rgba(48,86,211,.12);
+        }
+
+        /* 支持的资料类型 */
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 4px 0 20px;
+        }
+        .chip {
+            font-size: 12px;
+            line-height: 1;
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: var(--brand-soft);
+            color: #2743a8;
+            border: 1px solid rgba(48,86,211,.18);
+        }
+
+        /* 上传区 */
+        .upload-area {
+            position: relative;
+            border: 1.5px dashed rgba(48,86,211,.42);
+            border-radius: 16px;
+            padding: 34px 24px 30px;
+            text-align: center;
+            cursor: pointer;
+            background: linear-gradient(180deg, rgba(48,86,211,.045), rgba(48,86,211,.015));
+            transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+        .upload-area:hover {
+            border-color: rgba(48,86,211,.78);
+            box-shadow: 0 14px 32px rgba(48,86,211,.12);
+            transform: translateY(-1px);
+        }
+        .upload-icon {
+            width: 62px;
+            height: 62px;
+            margin: 0 auto 14px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-sm);
+        }
+        .upload-icon svg { width: 28px; height: 28px; display: block; }
+        .upload-title {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .upload-desc {
+            margin: 9px 0 0;
+            font-size: 12px;
+            line-height: 1.75;
+            color: var(--muted);
+        }
+        .file-input { display: none; }
+
+        /* 流程提示 */
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0 4px;
+        }
+        .step {
+            flex: 1 1 180px;
+            min-width: 158px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px 14px;
+            background: var(--panel-2);
+        }
+        .step b {
+            display: block;
+            font-size: 11px;
+            letter-spacing: .5px;
+            color: var(--brand);
+            margin-bottom: 5px;
+        }
+        .step span { font-size: 12px; line-height: 1.6; color: var(--muted); }
+
+        /* 文件列表 */
+        .file-list {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .file-list:empty::before {
+            content: "暂无上传记录 —— 选择或拖入文件后，这里会实时显示解析进度。";
+            display: block;
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+            padding: 18px 14px;
+            border: 1px dashed var(--line);
+            border-radius: 12px;
+            background: var(--panel-2);
+        }
+        .file-item {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+            animation: itemIn .28s ease both;
+        }
+        @keyframes itemIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: none; }
+        }
+        .file-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 0;
+        }
+        .file-name {
+            font-weight: 600;
+            font-size: 13.5px;
+            color: var(--text);
+            word-break: break-all;
+        }
+        .file-size {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            min-width: 84px;
+            text-align: center;
+            flex: 0 0 auto;
+            letter-spacing: .2px;
+            white-space: nowrap;
+        }
+        .status-uploading  { background: linear-gradient(135deg, #f3a63c, #e58a1f); }
+        .status-processing { background: linear-gradient(135deg, #4b7bf5, #3056d3); }
+        .status-completed  { background: linear-gradient(135deg, #1fbe84, #12a870); }
+        .status-error      { background: linear-gradient(135deg, #ee5a5f, #d93a40); }
+
+        /* 进度条（宽度与颜色由脚本设置） */
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eaeff7;
+            margin-top: 10px;
+            border-radius: 999px;
+            overflow: hidden;
+            display: none;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #e58a1f;
+            width: 0%;
+            border-radius: 999px;
+            transition: width .35s ease, background-color .35s ease;
+        }
+        .btn {
+            background: linear-gradient(135deg, var(--brand), var(--brand2));
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+            transition: filter .2s ease;
+        }
+        .btn:hover { filter: brightness(1.06); }
+        .btn:disabled { background: #c3ccda; cursor: not-allowed; }
+
+        /* 任务日志（可展开/收起） */
+        .log-details {
+            margin-top: 10px;
+            padding-top: 8px;
+            font-size: 12px;
+            color: var(--muted);
+            border-top: 1px dashed var(--line);
+        }
+        .log-details summary {
+            cursor: pointer;
+            user-select: none;
+            color: #54637a;
+            font-size: 12px;
+        }
+        .log-details summary::marker { color: var(--brand); }
+        .log-list {
+            margin: 8px 0 0 18px;
+            padding: 0;
+        }
+        .log-list li {
+            margin: 3px 0;
+            line-height: 1.6;
+            color: #54637a;
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 22px 18px; }
+            h1 { font-size: 17px; }
+            .upload-area { padding: 26px 16px 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="page-head">
+        <div class="mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 16V4"/><path d="M7 9l5-5 5 5"/>
+                <path d="M4 16.5V19a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2.5"/>
+            </svg>
+        </div>
+        <div>
+            <h1>金融知识库 · 文件导入</h1>
+            <p class="sub">上传金融资料，系统自动解析、切分、识别主体并写入向量库</p>
+        </div>
+        <a class="back-link" href="/">← 返回导航</a>
+    </div>
+
+    <div class="chips">
+        <span class="chip">PDF · 年报 / 说明书 / 风险揭示书</span>
+        <span class="chip">Word · .doc / .docx 问答资料</span>
+        <span class="chip">Markdown · .md</span>
+    </div>
+
+    <div class="upload-area" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3056d3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.2 9.3A4.5 4.5 0 0 0 7 19h10.5Z"/>
+                <path d="M12 16.5V9.5"/><path d="M9.2 12.3 12 9.5l2.8 2.8"/>
+            </svg>
+        </div>
+        <p class="upload-title">点击选择文件，或直接拖拽到此处</p>
+        <p class="upload-desc">
+            支持 PDF / Markdown / Word（.doc、.docx）<br>
+            覆盖：上市公司年报、基金与理财说明书、风险揭示书、政策文件、FAQ 问答
+        </p>
+        <!-- accept 已包含 Word 类型 -->
+        <input type="file" id="fileInput" class="file-input" multiple accept=".pdf,.md,.doc,.docx">
+    </div>
+
+    <div class="steps">
+        <div class="step"><b>STEP 1 · 上传</b><span>选择或拖入一个 / 多个文件</span></div>
+        <div class="step"><b>STEP 2 · 解析</b><span>PDF 走 MinerU，Word 先转 Markdown</span></div>
+        <div class="step"><b>STEP 3 · 入库</b><span>切分、识别金融主体、写入向量库</span></div>
+    </div>
+
+    <div id="fileList" class="file-list"></div>
+
+</div>
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    
+    // 模拟后端API地址
+    const API_BASE = 'http://127.0.0.1:8000';
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = '#ecf6fd';
+    });
+
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = '';
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = '';
+        handleFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        handleFiles(e.target.files);
+    });
+
+    function handleFiles(files) {
+        Array.from(files).forEach(uploadFile);
+    }
+
+    function updateProgressBar(bar, percentage) {
+        bar.style.width = percentage + '%';
+        if (percentage >= 100) {
+            bar.style.backgroundColor = '#3498db'; // 蓝色
+        } else {
+            bar.style.backgroundColor = '#f39c12'; // 橘红色
+        }
+    }
+
+    async function uploadFile(file) {
+        // 创建文件项UI
+        const id = 'file-' + Math.random().toString(36).substr(2, 9);
+        const html = `
+            <div class="file-item" id="${id}">
+                <div class="file-info">
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">${(file.size / 1024).toFixed(2)} KB</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar"></div>
+                    </div>
+                    <details class="log-details">
+                        <summary>日志（点击展开）</summary>
+                        <ul class="log-list"></ul>
+                    </details>
+                </div>
+                <div class="status-badge status-uploading">上传中...</div>
+            </div>
+        `;
+        fileList.insertAdjacentHTML('afterbegin', html);
+        const itemEl = document.getElementById(id);
+        const statusBadge = itemEl.querySelector('.status-badge');
+        const progressBar = itemEl.querySelector('.progress-bar');
+        const progressContainer = itemEl.querySelector('.progress-bar-container');
+        const logDetails = itemEl.querySelector('.log-details');
+        const logSummary = itemEl.querySelector('.log-details summary');
+        const logListEl = itemEl.querySelector('.log-list');
+
+        // 构建FormData
+        const formData = new FormData();
+        formData.append('files', file);
+
+        try {
+            // 1. 上传文件
+            progressContainer.style.display = 'block';
+            // 模拟上传进度
+            updateProgressBar(progressBar, 50);
+
+            const response = await fetch(`${API_BASE}/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Upload failed');
+            
+            const result = await response.json();
+            const taskId = result.task_ids[0]; // 假设一次传一个或取第一个
+
+            // 上传完成，进入处理中，进度固定为30%
+            updateProgressBar(progressBar, 30);
+            statusBadge.textContent = '处理中...';
+            statusBadge.className = 'status-badge status-processing';
+
+            // 2. 轮询状态
+            pollStatus(taskId, itemEl);
+
+        } catch (error) {
+            console.error(error);
+            statusBadge.textContent = '失败';
+            statusBadge.className = 'status-badge status-error';
+        }
+    }
+
+    function normalizeDoneLog(text) {
+        // 后端可能返回中文节点名，也可能已拼接“已完成”
+        if (typeof text !== 'string') return String(text);
+        return text.endsWith('已完成') ? text : `${text}已完成`;
+    }
+
+    function normalizeRunningLog(text) {
+        // 后端可能返回中文节点名，也可能已拼接“正在进行.../处理中...”
+        if (typeof text !== 'string') return String(text);
+        if (text.startsWith('正在进行')) return text.endsWith('...') ? text : `${text}...`;
+        return `正在进行${text}...`;
+    }
+
+    function renderLogs(itemEl, doneList, runningList) {
+        const logSummary = itemEl.querySelector('.log-details summary');
+        const logListEl = itemEl.querySelector('.log-list');
+        const logDetails = itemEl.querySelector('.log-details');
+
+        const done = Array.isArray(doneList) ? doneList : [];
+        const running = Array.isArray(runningList) ? runningList : [];
+
+        // 更新 summary（即使收起也能看到进度）
+        logSummary.textContent = `日志（已完成${done.length}，进行中${running.length}，点击展开）`;
+
+        // 清空并重建列表
+        logListEl.innerHTML = '';
+        const lines = [
+            ...done.map(normalizeDoneLog),
+            ...running.map(normalizeRunningLog),
+        ];
+
+        if (lines.length === 0) {
+            const li = document.createElement('li');
+            li.textContent = '暂无日志';
+            logListEl.appendChild(li);
+        } else {
+            for (const line of lines) {
+                const li = document.createElement('li');
+                li.textContent = line;
+                logListEl.appendChild(li);
+            }
+        }
+
+        // 如果没有任何日志，默认收起；否则保持用户选择
+        if (lines.length === 0) {
+            logDetails.open = false;
+        }
+    }
+
+    function pollStatus(taskId, itemEl) {
+        const statusBadge = itemEl.querySelector('.status-badge');
+        const progressBar = itemEl.querySelector('.progress-bar');
+        
+        const interval = setInterval(async () => {
+            try {
+                const res = await fetch(`${API_BASE}/status/${taskId}`);
+                const data = await res.json();
+
+                // 渲染日志（done/running）
+                renderLogs(itemEl, data.done_list, data.running_list);
+                
+                if (data.status === 'completed') {
+                    statusBadge.textContent = '已完成';
+                    statusBadge.className = 'status-badge status-completed';
+                    updateProgressBar(progressBar, 100);
+                    clearInterval(interval);
+                } else if (data.status === 'processing') {
+                    // 保持处理中状态
+                    statusBadge.textContent = '处理中...';
+                    // 确保进度为30%
+                     updateProgressBar(progressBar, 30);
+                } else if (data.status === 'failed') {
+                    statusBadge.textContent = '失败';
+                    statusBadge.className = 'status-badge status-error';
+                    clearInterval(interval);
+                }
+            } catch (e) {
+                console.error('Polling error', e);
+            }
+        }, 2000); // 每2秒轮询一次
+    }
+</script>
+
+</body>
+</html>

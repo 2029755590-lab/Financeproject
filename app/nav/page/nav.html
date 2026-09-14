@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>金融知识库 · 系统导航</title>
+<style>
+  :root{
+    --bg:#eef2f9;
+    --panel:#ffffff;
+    --panel-2:#f7f9fd;
+    --text:#0f1e35;
+    --muted:#6b7a90;
+    --brand:#3056d3;
+    --brand2:#6c4bd8;
+    --line:#e4eaf3;
+    --ok:#12a870;
+    --danger:#e0484d;
+    --shadow-sm:0 1px 2px rgba(15,30,53,.05), 0 6px 18px rgba(15,30,53,.06);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    padding:44px 20px 56px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    color:var(--text);
+    font-family:"Segoe UI","Microsoft YaHei",system-ui,-apple-system,"PingFang SC",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1000px 480px at 12% -12%, rgba(48,86,211,.16), transparent 60%),
+      radial-gradient(820px 440px at 100% 0%, rgba(108,75,216,.13), transparent 55%),
+      linear-gradient(180deg,#f4f7fc 0%, var(--bg) 60%, #e9eefa 100%);
+  }
+  .wrap{width:100%;max-width:980px}
+
+  /* 页头 */
+  .head{display:flex;align-items:center;gap:15px;margin-bottom:30px}
+  .mark{
+    width:54px;height:54px;border-radius:16px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--brand),var(--brand2));
+    box-shadow:0 12px 26px rgba(48,86,211,.30);
+  }
+  .mark svg{width:27px;height:27px;display:block}
+  h1{margin:0;font-size:22px;font-weight:600;letter-spacing:.2px}
+  .head p{margin:6px 0 0;font-size:13px;color:var(--muted)}
+
+  /* 模块卡片 */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px}
+  .card{
+    position:relative;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:22px 22px 20px;
+    box-shadow:var(--shadow-sm);
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 20px 46px rgba(15,30,53,.14);
+    border-color:rgba(48,86,211,.28);
+  }
+  .card-top{display:flex;align-items:center;gap:12px}
+  .ico{
+    width:44px;height:44px;border-radius:13px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .ico.a{background:linear-gradient(135deg,#4b7bf5,#3056d3);box-shadow:0 10px 22px rgba(48,86,211,.26)}
+  .ico.b{background:linear-gradient(135deg,#8a63e8,#6c4bd8);box-shadow:0 10px 22px rgba(108,75,216,.26)}
+  .ico svg{width:22px;height:22px;display:block}
+  .card h2{margin:0;font-size:16px;font-weight:600;letter-spacing:.2px}
+  .desc{margin:0;font-size:13px;line-height:1.75;color:var(--muted)}
+  .feats{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:7px}
+  .feats li{
+    font-size:12px;color:#2743a8;
+    background:rgba(48,86,211,.09);
+    border:1px solid rgba(48,86,211,.16);
+    padding:5px 10px;border-radius:999px;
+  }
+  .meta-row{
+    display:flex;align-items:center;gap:8px;
+    font-size:12px;color:var(--muted);
+    border-top:1px dashed var(--line);
+    padding-top:12px;
+  }
+  .dot{
+    width:8px;height:8px;border-radius:50%;flex:0 0 auto;
+    background:#c3ccda;
+    transition:background .2s ease, box-shadow .2s ease;
+  }
+  .dot.ok{background:var(--ok);box-shadow:0 0 0 4px rgba(18,168,112,.15)}
+  .dot.bad{background:var(--danger);box-shadow:0 0 0 4px rgba(224,72,77,.14)}
+  .go{
+    margin-top:auto;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    height:46px;border-radius:13px;
+    text-decoration:none;font-size:14px;font-weight:600;color:#fff;
+    background:linear-gradient(135deg,var(--brand),var(--brand2));
+    box-shadow:0 10px 22px rgba(48,86,211,.24);
+    transition:filter .2s ease, transform .15s ease;
+  }
+  .go:hover{filter:brightness(1.07)}
+  .go:active{transform:translateY(1px)}
+
+  /* 底部提示 */
+  .tip{
+    margin:24px 0 0;
+    font-size:12px;
+    line-height:1.9;
+    color:var(--muted);
+    text-align:center;
+  }
+  .tip code{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+    background:#f1f5fb;border:1px solid var(--line);
+    border-radius:6px;padding:1px 7px;color:#3d4a63;
+  }
+  @media (max-width:640px){
+    body{padding:28px 16px 40px}
+    h1{font-size:19px}
+    .head{gap:12px;margin-bottom:22px}
+    .mark{width:46px;height:46px;border-radius:14px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19V9"/><path d="M10 19V4.5"/><path d="M16 19v-6.5"/><path d="M3 19h18"/>
+      </svg>
+    </div>
+    <div>
+      <h1>金融知识库 · 系统导航</h1>
+      <p>请选择要进入的模块 —— 两个模块由独立服务提供，需分别启动</p>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-top">
+        <div class="ico a" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 16V4"/><path d="M7 9l5-5 5 5"/>
+            <path d="M4 16.5V19a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2.5"/>
+          </svg>
+        </div>
+        <h2>文档导入模块</h2>
+      </div>
+      <p class="desc">上传金融资料（PDF / Markdown / Word），系统自动解析、切分、识别金融主体并写入向量库。</p>
+      <ul class="feats">
+        <li>年报 / 说明书</li>
+        <li>风险揭示书</li>
+        <li>政策文件</li>
+        <li>FAQ 问答</li>
+      </ul>
+      <div class="meta-row">
+        <span class="dot" id="dotImport"></span>
+        <span id="txtImport">正在检测服务状态…</span>
+      </div>
+      <a class="go" id="goImport" href="#">进入导入模块 →</a>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <div class="ico b" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8Z"/>
+            <path d="M8.5 12h.01"/><path d="M12 12h.01"/><path d="M15.5 12h.01"/>
+          </svg>
+        </div>
+        <h2>智能问答模块</h2>
+      </div>
+      <p class="desc">基于已导入的金融资料检索问答，输出结论、风险提示与引用来源，支持多轮追问与流式输出。</p>
+      <ul class="feats">
+        <li>产品问答</li>
+        <li>概念解释</li>
+        <li>风险提示</li>
+        <li>业务规则</li>
+      </ul>
+      <div class="meta-row">
+        <span class="dot" id="dotQuery"></span>
+        <span id="txtQuery">正在检测服务状态…</span>
+      </div>
+      <a class="go" id="goQuery" href="#">进入问答模块 →</a>
+    </div>
+
+  </div>
+
+  <p class="tip">
+    两个模块由独立服务提供，需分别启动：<br>
+    导入服务 <code id="addrImport">:8000</code>　·　查询服务 <code id="addrQuery">:9091</code><br>
+    若状态显示为红色，请先在对应目录启动服务后刷新本页。
+  </p>
+
+</div>
+
+<script>
+  // 跟随访问主机自动推导地址：本地可用，局域网 / 其它机器访问也能用
+  const HOST = location.hostname || '127.0.0.1';
+  const IMPORT_PORT = 8000;
+  const QUERY_PORT  = 9091;
+  const IMPORT_BASE = `http://${HOST}:${IMPORT_PORT}`;
+  const QUERY_BASE  = `http://${HOST}:${QUERY_PORT}`;
+
+  document.getElementById('goImport').href = `${IMPORT_BASE}/import.html`;
+  document.getElementById('goQuery').href  = `${QUERY_BASE}/chat.html`;
+  document.getElementById('addrImport').textContent = `${HOST}:${IMPORT_PORT}`;
+  document.getElementById('addrQuery').textContent  = `${HOST}:${QUERY_PORT}`;
+
+  async function probe(base, dotId, txtId, name) {
+    const dot = document.getElementById(dotId);
+    const txt = document.getElementById(txtId);
+    try {
+      const res = await fetch(`${base}/health`, { cache: 'no-store' });
+      if (!res.ok) throw new Error('bad status');
+      dot.classList.add('ok');
+      txt.textContent = `${name}已就绪`;
+    } catch (e) {
+      dot.classList.add('bad');
+      txt.textContent = `${name}未启动（${base}）`;
+    }
+  }
+
+  probe(IMPORT_BASE, 'dotImport', 'txtImport', '导入服务');
+  probe(QUERY_BASE,  'dotQuery',  'txtQuery',  '查询服务');
+</script>
+</body>
+</html>
