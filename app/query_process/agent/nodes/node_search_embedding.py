@@ -4,6 +4,7 @@ from app.core.logger import logger, node_log
 from app.lm.embedding_utils import generate_embeddings
 from app.query_process.agent.state import QueryGraphState
 from app.utils.task_utils import add_running_task, add_done_task
+from app.utils.escape_milvus_string_utils import escape_milvus_string
 
 RETRIEVE_OUTPUT_FIELDS = [
     "chunk_id",
@@ -38,7 +39,7 @@ def node_search_embedding(state: QueryGraphState):
     # 检索条件, 如果有item_names, 则根据item_name检索, 否则全库检索
     if item_names:
         # 将item_names中的所有的产品主体拼接为字符串
-        expr_data = ", ".join(f"'{n}'" for n in item_names)
+        expr_data = ", ".join(f"'{escape_milvus_string(n)}'" for n in item_names)
         # 将item_name作为检索的条件，拼接条件
         expr = f"item_name in [{expr_data}]"
         # 检索结果数量

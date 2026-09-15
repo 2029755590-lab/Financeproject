@@ -47,7 +47,9 @@ query_graph_default_state: QueryGraphState = {
     "item_names": [],
     "rewritten_query": "",
     "history": [],
-    "is_stream": False
+    "is_stream": False,
+    "is_no_entity": False,  # ★ 新增
+    "question_type": ""
 }
 
 

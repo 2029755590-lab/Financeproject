@@ -8,6 +8,7 @@ from app.lm.embedding_utils import generate_embeddings
 from app.lm.lm_utils import get_llm_client
 from app.query_process.agent.nodes.node_search_embedding import RETRIEVE_OUTPUT_FIELDS
 from app.query_process.agent.state import QueryGraphState
+from app.utils.escape_milvus_string_utils import escape_milvus_string
 from app.utils.task_utils import add_running_task, add_done_task
 
 @step_log("step_1_create_hyde_doc")
@@ -42,7 +43,7 @@ def step_2_search_embedding_hyde(
 
     # ★P0：有实体过滤 / 无实体全库
     if item_names:
-        expr_data = ", ".join(f"'{n}'" for n in item_names)
+        expr_data = ", ".join(f"'{escape_milvus_string(n)}'" for n in item_names)
         expr = f"item_name in [{expr_data}]"
     else:
         expr = None

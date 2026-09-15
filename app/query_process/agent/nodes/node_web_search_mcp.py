@@ -41,21 +41,25 @@ def node_web_search_mcp(state: QueryGraphState):
     results = []
     # 判断rewritten_query是否为空
     if rewritten_query:
-        # 异步调用MCP服务
-        result = asyncio.run(mcp_call_streamable(rewritten_query))
-        # 获取网络搜索的结果主要数据
-        text = result.content[0].text
-        # 将json格式的字符串text转换为字典
-        text_dict = json.loads(text)
-        # 遍历text_dict中pages所对应的数据
-        for page in text_dict.get("pages", []):
-            results.append(
-                {
-                    "title": page.get("title", "").strip(),
-                    "url": page.get("url", "").strip(),
-                    "snippet": page.get("snippet", "").strip(),
-                }
-            )
+        try:
+            # 异步调用MCP服务
+            result = asyncio.run(mcp_call_streamable(rewritten_query))
+            # 获取网络搜索的结果主要数据
+            text = result.content[0].text
+            # 将json格式的字符串text转换为字典
+            text_dict = json.loads(text)
+            # 遍历text_dict中pages所对应的数据
+            for page in text_dict.get("pages", []):
+                results.append(
+                    {
+                        "title": page.get("title", "").strip(),
+                        "url": page.get("url", "").strip(),
+                        "snippet": page.get("snippet", "").strip(),
+                    }
+                )
+        except Exception as e:
+            logger.error(f"联网搜索失败，已降级为空结果：{e}")
+            results = []
     # 记录当前任务的状态为已完成
     add_done_task(state["session_id"], "node_web_search_mcp", state["is_stream"])
     return {"web_search_docs": results}

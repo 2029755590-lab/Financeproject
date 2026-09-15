@@ -5,7 +5,7 @@ from docx import Document
 
 from app.core.logger import node_log, step_log
 from app.import_process.agent.state import ImportGraphState
-from app.utils.task_utils import add_running_task
+from app.utils.task_utils import add_running_task, add_done_task
 from app.core.logger import logger
 
 IMAGES_DIR_NAME = "images"
@@ -205,6 +205,12 @@ def node_docx_to_md(state: ImportGraphState) -> ImportGraphState:
     # 保存为 md 文件，work_dir 是工作目录，md_text 是 md 文本，images_dir 是图片目录路径，stem 是文件名前缀
     md_path = step_4_append_images_and_save(work_dir, md_text, images_dir, docx_obj.stem)
 
+    # ★ 回写状态
+    state["md_path"] = md_path
+    with open(md_path, "r", encoding="utf-8") as f:
+        state["md_content"] = f.read()
+    add_done_task(state["task_id"], "node_docx_to_md")
+    return state
 
 
 

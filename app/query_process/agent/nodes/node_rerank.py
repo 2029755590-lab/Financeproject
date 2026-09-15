@@ -1,5 +1,5 @@
-from app.core import logger
-from app.core.logger import node_log, step_log
+
+from app.core.logger import node_log, step_log,logger
 from app.lm.reranker_utils import get_reranker_model
 from app.query_process.agent.state import QueryGraphState
 from app.utils.task_utils import add_running_task, add_done_task

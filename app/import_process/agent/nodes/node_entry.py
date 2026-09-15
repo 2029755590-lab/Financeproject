@@ -41,17 +41,16 @@ def node_entry(state: ImportGraphState) -> ImportGraphState:
         # 更新is_md_read_enabled、md_path
         state["is_md_read_enabled"] = True
         state["md_path"] = local_file_path
-    elif local_file_path.endswith(".doc"):
-        # 更新is_docx_read_enabled、docx_path
+        # 用元组形式，一次匹配两种后缀
+    elif local_file_path.endswith((".doc", ".docx")):
         state["is_docx_read_enabled"] = True
         state["docx_path"] = local_file_path
     else:
-        # 说明文件不是pdf或md
-        logger.warning(f"当前上传文件路径{local_file_path}，文件格式不是系统支持的格式")
-        # 记录节点的状态为已完成
+        logger.error(f"当前上传文件路径{local_file_path}，文件格式不是系统支持的格式")
         add_done_task(state["task_id"], "node_entry")
-        # 返回状态
-        return state
+        # 抛异常让 Web 层把任务标成 failed
+        raise ValueError(f"不支持的文件类型：{local_file_path}")
+
     # 获取文件标题（文件名去掉后缀的结果）
     file_title = Path(local_file_path).stem
     # 更新file_title
